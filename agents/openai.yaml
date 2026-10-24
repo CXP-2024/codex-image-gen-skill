@@ -1,0 +1,6 @@
+interface:
+  display_name: "二次元插画 · Krea2 优先"
+  short_description: "通过本机 ComfyUI 生成二次元插画，默认 Krea2，保留多后端与局部修图流程"
+  default_prompt: "使用 $image-gen，优先选择 Krea2 工作流，根据我的要求生成二次元插画。"
+policy:
+  allow_implicit_invocation: true
