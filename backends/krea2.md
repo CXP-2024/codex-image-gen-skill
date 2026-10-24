@@ -5,7 +5,7 @@
 - 模型:`H:\models\diffusion_models\krea2_turbo_int8_convrot.safetensors`(Krea 2 Turbo,12B DiT,8 步蒸馏)
 - 文本编码器:`H:\models\text_encoders\qwen3vl_4b_fp8_scaled.safetensors`(Qwen3-VL 4B,`clip_type` = `krea2`)
 - VAE:`H:\models\vae\qwen_image_vae.safetensors`(和 Anima 同一个文件)
-- LoRA:`krea2_style_reference.safetensors`(ostris 的风格参考 LoRA,1–2 张参考图)、`krea2_retroanime.safetensors`(触发词 `purple retro anime style`)
+- LoRA:`krea2_style_reference.safetensors`(ostris 的风格参考 LoRA,1–2 张参考图)
 - 来源:Hugging Face `Comfy-Org/Krea-2`;许可 Krea 2 Community License:可以商用的前提是公司全年总收入 < 100 万美元,超过要另买企业许可
 - ComfyUI 0.42.1 原生支持,只用核心节点
 
@@ -13,7 +13,7 @@
 
 - **纯文本**:job 里不写 `style_images`。`CLIPTextEncode` + `KSampler`,8 步,CFG 1,`euler`/`simple`,负面条件自动置零(写了 `negative` 也不生效)。
 - **风格参考图**:job 里写 `"style_images": ["H:\\...\\ref.png"]`(1–3 张,官方说 1–2 张效果最好)。脚本会把图片上传到 ComfyUI,自动挂上 style reference LoRA,按官方蓝图走 `TextEncodeQwenImageEditPlus` → `FluxKontextMultiReferenceLatentMethod(index_timestep_zero)` → `CFGGuider` + `SamplerCustomAdvanced`,`ModelSamplingFlux`(max 1.15 / base 0.5)。`style_strength` 默认 1.0。
-- 额外风格 LoRA:`"loras": [["krea2_retroanime.safetensors", 1.0]]`,并在提示词末尾加触发词。
+- 额外风格 LoRA:`"loras": [["<文件名>", 1.0]]`,有触发词就写进提示词。可用的 LoRA 见 `lora_gallery/LORA_GALLERY.md`。
 
 ```json
 {"backend": "krea2", "prompt": "...", "style_images": ["H:\\MV_making\\assets\\img_styles_example\\test2.jpg"],
@@ -39,13 +39,14 @@
 
 从用户收集的 `img_styles_example\test13.png`(夜色小巷)和 `test14.png`(雪中玻璃温室)里读出的作者原始工作流(PNG 内嵌 ComfyUI `prompt`),本地按原 seed 复现,画风色调一致,细节不逐像素相同。
 
-- **LoRA 栈**(都在 `H:\models\loras`):`Krea2_TextFusion_Refusal_Reduction` 0.8、`Krea_2_zidiusArt_Melancholy_v2` 0.3、`kieed_v1_epoch20` 0.65、`z3zz4-k2-4_c1-st5000` 0.45、`MSK_detailed_krea` 0.4。这些文件都没有文本编码器权重,只加载到模型即可。
-- **触发词** `zidiusArt, MSK, `(预设自动加在最前)。
+- **LoRA 栈**(都在 `H:\models\loras`):`Krea2_TextFusion_Refusal_Reduction` 0.8、`kieed_v1_epoch20` 0.65、`z3zz4-k2-4_c1-st5000` 0.45、`MSK_detailed_krea` 0.4。这些文件都没有文本编码器权重,只加载到模型即可。
+- **触发词** `MSK, `(预设自动加在最前)。
+- **2026-10-24 改动**:用户移除了原配方里的 `Krea_2_zidiusArt_Melancholy_v2`(0.3,触发词 zidiusArt),现在是 4 个 LoRA;氛围会比 10-22 归档的那批图略淡。文件在 `H:\models\loras\_removed`,要恢复原配方就移回并在预设里加回。
 - **采样**:第一段 8 步 → latent bislerp ×2 → 第二段从第 4 步跑到第 8 步,第二段 seed = seed + 1;CFG 1,euler/simple。
 - **ColorMatch**:`"color_match": 0.5`,用第一段小图的颜色校正高清结果(MKL 算法,`generate.py` 下载后用 numpy 做,不需要 KJNodes)。第一段小图另存为 `<prefix>_firstpass`。
 - **画幅**:21:9 超宽。默认 1568×672(约 1MP,输出 3136×1344);温室原图是 2216×952(约 2MP,输出 4432×1904),job 里写 `width`/`height` 即可。
 - **提示词写法**:一大段英文自然语言,按 镜头 / 人物 / 场景 / 光与渲染 / **色彩脚本** / 氛围 分段。色彩脚本用十六进制色值逐项指定区域颜色(如 `#0c1014 铁架最深阴影`、`#b2352c 红灯笼,画面唯一暖色`),这是两张图色调统一克制的关键。完整原文见 `img_styles_example\test13_工作流.txt`、`test14_工作流.txt`。
-- **许可**:Melancholy 不允许出售生成的图;要商用就把它从 `loras` 里去掉(job 里写完整的 `loras` 覆盖预设)。
+- **许可**:剩下的 4 个 LoRA 里 kieed、Z3ZZ4、MSK 作者允许卖图,TextFusion 来源不明,商用前确认。
 
 ```json
 {"style": "kieed_cinema", "prompt": "A cinematic 2D illustrated scene in widescreen ... Colour script: ...",

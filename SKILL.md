@@ -38,9 +38,10 @@ description: |
 | `codex` | 可用 | 场景、光影、构图最丰富;自然语言理解最好;可附参考图 | 不能设尺寸/seed/负面词;消耗 Codex 用量;每张约 50–100 秒 | `backends/codex.md` |
 
 ### 怎么选
-- **默认画风**(2026-10-21 起):`style: kieed` = K2 + kieed(Krea 2 版)单独使用 + 两段式采样,提示词用 8 段英文长描述(见 `backends/krea2.md`)。Anima 的 `style: natarapisu` / `style: kazutake` 保留为备选,不要混合 LoRA。
-- **电影感宽幅**(2026-10-22 起):`style: kieed_cinema` = 社区作者的 5 LoRA 配方(kieed 0.65 + 氛围/细节 LoRA)+ 8+8 两段采样 + ColorMatch,21:9 超宽,提示词带十六进制色彩脚本。适合 MV 场景镜头、大场景小人物。详见 `backends/krea2.md`。含 Melancholy LoRA,不能卖图。
+- **默认画风**(2026-10-21 起):`style: kieed` = K2 + kieed(Krea 2 版)单独使用 + 两段式采样,提示词用 8 段英文长描述(见 `backends/krea2.md`)。Anima 的画风 LoRA 已于 2026-10-24 全部移除。
+- **电影感宽幅**(2026-10-22 起):`style: kieed_cinema` = 社区作者的配方(kieed 0.65 + 细节 LoRA,2026-10-24 起去掉了 Melancholy,剩 4 个)+ 8+8 两段采样 + ColorMatch,21:9 超宽,提示词带十六进制色彩脚本。适合 MV 场景镜头、大场景小人物。详见 `backends/krea2.md`。
 - **清爽粉彩(自训练)**(2026-10-24 起):`style: ura` = K2 + 自己训练的 ura 画风 LoRA(`ura_style_k2_000000900.safetensors`,80 张 Pixiv 71432148 作品,batch 4 × 900 步)+ 两段采样,触发词 `uraStyle` 由预设自动加。细线、淡阴影、圆脸大眼的白底插画。训练素材和配置在 `tools/k2_lora_cloud`(`README_ura_style.md`),云端镜像 `k2-lora-train`。不加触发词也会改变画风,不要时就别加载。
+- **甜美柔光(自训练)**(2026-10-24 起):`style: peko` = K2 + `peko_style_k2_000000300.safetensors`(17 张 Pixiv 106942163 作品,已剔除性暗示图)+ 两段采样,触发词 `pekoStyle` 自动加。效果较温和:更亮、腮红重、头发泛蓝光。
 - **各 LoRA 长什么样**:看 `lora_gallery/LORA_GALLERY.md`(同提示词同 seed 的样图 + 触发词/许可/来源)。**`H:\models\loras` 里增删或重新测试 LoRA 时必须同步更新**:改 `lora_gallery/loras.json`,再运行 `python lora_gallery/build_gallery.py`(只补渲缺的样图,`--redo <id>` 强制重渲),文档和总览图会自动重建。新增画风预设时也在 json 里写上 `preset`。
 - 用户点名后端 → 用点名的。
 - 要**模仿某位画师/某种画风** → `anima`(只有它的 `@画师` 有效)。

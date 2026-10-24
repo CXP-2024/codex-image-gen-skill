@@ -49,18 +49,14 @@ BACKENDS = {
 # Named looks the user picked (2026-10-21). A job's "style" sets these and prepends the trigger to the prompt;
 # fields written explicitly in the job still win.
 STYLES = {
-    "natarapisu": {"backend": "anima", "unet": "anima-base-v1.0.safetensors",
-                   "loras": [["na_tarapisu153_style_v1.safetensors", 1.0]], "trigger": "@na tarapisu153, ",
-                   "steps": 32, "hires": 1.5, "hires_denoise": 0.45, "hires_steps": 20},
     # Default since 2026-10-21: Krea 2 Turbo + kieed (Krea 2 epoch20) alone, community two-pass recipe.
     "kieed": {"backend": "krea2", "loras": [["kieed_v1_epoch20.safetensors", 1.0]], "trigger": "",
               "two_pass": True, "sampler": "euler", "scheduler": "simple", "width": 768, "height": 1152},
     # 2026-10-22: the community author's 5-LoRA cinematic recipe read from test13/test14.png (night alley, snowy
     # glasshouse): kieed at 0.65 plus mood/detail LoRAs, 8+8 two-pass, MKL color match 0.5, 21:9 at ~1 MP.
-    # Melancholy forbids selling generated images.
-    "kieed_cinema": {"backend": "krea2", "trigger": "zidiusArt, MSK, ",
+    # 2026-10-24: the user removed Melancholy (0.3) from H:/models/loras, so the recipe now has 4 LoRAs.
+    "kieed_cinema": {"backend": "krea2", "trigger": "MSK, ",
                      "loras": [["Krea2_TextFusion_Refusal_Reduction.safetensors", 0.8],
-                               ["Krea_2_zidiusArt_Melancholy_v2.safetensors", 0.3],
                                ["kieed_v1_epoch20.safetensors", 0.65],
                                ["z3zz4-k2-4_c1-st5000.safetensors", 0.45],
                                ["MSK_detailed_krea.safetensors", 0.4]],
@@ -72,9 +68,11 @@ STYLES = {
     "ura": {"backend": "krea2", "loras": [["ura_style_k2_000000900.safetensors", 1.0]],
             "trigger": "uraStyle, an anime illustration by uraStyle. ",
             "two_pass": True, "sampler": "euler", "scheduler": "simple", "width": 832, "height": 1248},
-    "kazutake": {"backend": "anima", "unet": "anima-base-v1.0.safetensors",
-                 "loras": [["kazutake-hazano_v2_epoch28.safetensors", 1.0]], "trigger": "@4x0style, @kazutake hazano, ",
-                 "steps": 32, "hires": 1.5, "hires_denoise": 0.45, "hires_steps": 20},
+    # 2026-10-24: own style LoRA from 17 non-explicit works by pekotaro (Pixiv 106942163), batch 4 x 300 steps.
+    # Soft high-key light, strong blush, bluish hair glow; mild effect, later steps leak dataset characters.
+    "peko": {"backend": "krea2", "loras": [["peko_style_k2_000000300.safetensors", 1.0]],
+             "trigger": "pekoStyle, an anime illustration by pekoStyle. ",
+             "two_pass": True, "sampler": "euler", "scheduler": "simple", "width": 832, "height": 1248},
 }
 STYLE_NEGATIVE = ", signature, artist name, twitter username"
 

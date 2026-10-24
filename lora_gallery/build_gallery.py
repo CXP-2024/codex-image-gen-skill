@@ -89,6 +89,8 @@ def main():
              "「可卖图」指 Civitai 页面上作者是否允许出售生成的图片；不确定的一律只自用。", ""]
     for group, title in GROUPS.items():
         entries = [e for e in reg["loras"] if e["group"] == group]
+        if not entries:
+            continue
         for e in entries:
             ensure_sample(e, reg, e["id"] in a.redo)
         sheet(entries, HERE / f"sheet_{group}.jpg")
@@ -104,6 +106,8 @@ def main():
                          f"{('`style: ' + e['preset'] + '`') if e.get('preset') else ''} | {cell(e.get('use'))} | "
                          f"{cell(e.get('license', ''))} | {src} |")
         lines.append("")
+    if reg.get("_removed"):
+        lines += ["## 已移除", "", reg["_removed"], ""]
     util = [e for e in reg["loras"] if e["group"] == "utility"]
     lines += ["## 功能类 LoRA（不改画风，不出样图）", "", "| 名称 | 文件（常用强度） | 用途 | 来源 |", "|---|---|---|---|"]
     for e in util:
